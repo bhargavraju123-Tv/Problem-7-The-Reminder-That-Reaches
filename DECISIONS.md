@@ -6,7 +6,7 @@
 This document records important implementation decisions, rejected alternatives,
 trade-offs, edge cases, and limitations as the project is developed.
 
-> This file is a living document. Update it whenever an important decision is made.
+> This file is a living document. Update it whenever an important decision is made. 
 
 ---
 
