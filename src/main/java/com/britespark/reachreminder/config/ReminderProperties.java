@@ -5,12 +5,12 @@ import org.springframework.stereotype.Component;
 import java.time.LocalTime;
 
 @Component
-@ConfigurationProperties(prefix = "app.reminder")
+@ConfigurationProperties(prefix = "reminder")
 public class ReminderProperties {
 
-    // Default values if not specified in application.properties
-    private LocalTime quietHoursStart = LocalTime.parse("08:00");
-    private LocalTime quietHoursEnd = LocalTime.parse("20:00");
+    // Default values updated to overnight hours (11 PM to 3 AM)
+    private LocalTime quietHoursStart = LocalTime.parse("23:00");
+    private LocalTime quietHoursEnd = LocalTime.parse("03:00");
     private String pythonCommand = "python";
 
     public LocalTime getQuietHoursStart() { return quietHoursStart; }

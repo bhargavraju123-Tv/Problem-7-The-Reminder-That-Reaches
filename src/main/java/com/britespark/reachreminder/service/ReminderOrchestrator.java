@@ -66,7 +66,7 @@ public class ReminderOrchestrator {
             }
 
             String message = generateMessage(apt, contact);
-
+            System.out.println("Sending to " + contact.name() + ": " + message);
             // DAY 2 RULE: An attempt counts as a contact whether it fails or succeeds
             residentContactCounts.put(contact.residentId(), pastContacts + 1);
 

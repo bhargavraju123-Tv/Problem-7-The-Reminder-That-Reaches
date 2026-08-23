@@ -15,9 +15,8 @@ import java.util.Set;
 public class ReminderPolicyEngine {
 
     private final ReminderProperties properties;
-    private final Set<String> sharedContactPoints = new HashSet<>(); // Initialized here now
+    private final Set<String> sharedContactPoints = new HashSet<>();
 
-    // Spring will now successfully inject only the properties
     public ReminderPolicyEngine(ReminderProperties properties) {
         this.properties = properties;
     }
@@ -33,7 +32,11 @@ public class ReminderPolicyEngine {
         if (contact == null) return PolicyDecision.blocked("NO_CONTACT_RECORD");
 
         LocalTime now = LocalTime.now();
-        if (now.isBefore(properties.getQuietHoursStart()) || now.isAfter(properties.getQuietHoursEnd())) {
+        LocalTime quietStart = properties.getQuietHoursStart(); // 23:00
+        LocalTime quietEnd = properties.getQuietHoursEnd();     // 03:00
+
+        // Handles overnight quiet hours: Blocks messages after 11 PM OR before 3 AM
+        if (now.isAfter(quietStart) || now.isBefore(quietEnd)) {
             return PolicyDecision.blocked("QUIET_HOURS");
         }
 
