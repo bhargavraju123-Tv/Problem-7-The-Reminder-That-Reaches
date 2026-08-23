@@ -8,8 +8,7 @@ import com.britespark.reachreminder.policy.PolicyDecision;
 import com.britespark.reachreminder.policy.ReminderPolicyEngine;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ReminderOrchestrator {
@@ -21,6 +20,9 @@ public class ReminderOrchestrator {
     private final ReportingService reporting;
 
     private final Set<String> processedAppointments = new HashSet<>();
+
+    // NEW: Track how many times we contact each resident to enforce the 7-day limit
+    private final Map<String, Integer> residentContactCounts = new HashMap<>();
 
     public ReminderOrchestrator(
             AppointmentRepository appointments,
@@ -36,13 +38,25 @@ public class ReminderOrchestrator {
     }
 
     public void runReminders() {
-        for (Appointment apt : appointments.findAll()) {
+        // PRIORITIZATION: Sort appointments by Date (Closest appointments get priority)
+        List<Appointment> sortedAppointments = new ArrayList<>(appointments.findAll());
+        sortedAppointments.sort(Comparator.comparing(Appointment::scheduledAt));
+
+        for (Appointment apt : sortedAppointments) {
 
             if (processedAppointments.contains(apt.appointmentId())) {
                 continue;
             }
 
             Contact contact = contacts.findById(apt.residentId());
+
+            // DAY 2 RULE: Check Rate Limit BEFORE anything else
+            // Note: If you received a historical contacts CSV for Day 2, you would load those previous counts into this map first!
+            int pastContacts = residentContactCounts.getOrDefault(contact.residentId(), 0);
+            if (pastContacts >= 2) {
+                reporting.logSuppression(apt, "RATE_LIMIT_EXCEEDED");
+                continue;
+            }
 
             PolicyDecision decision = policyEngine.evaluate(contact);
 
@@ -52,7 +66,10 @@ public class ReminderOrchestrator {
             }
 
             String message = generateMessage(apt, contact);
-            System.out.println("Sending to " + contact.name() + ": " + message);
+
+            // DAY 2 RULE: An attempt counts as a contact whether it fails or succeeds
+            residentContactCounts.put(contact.residentId(), pastContacts + 1);
+
             var result = fallbackEngine.executeFallback(contact, decision.getEligibleChannels(), message);
 
             reporting.logAttempt(apt, result);
@@ -63,23 +80,19 @@ public class ReminderOrchestrator {
     }
 
     private String generateMessage(Appointment apt, Contact contact) {
-        // 1. Get the language, default to English if it's missing somehow
         String lang = (contact.language() != null) ? contact.language().toLowerCase() : "en";
 
-        // 2. Return the correct translation based on the resident's preference!
         switch (lang) {
-            case "es": // Spanish
+            case "es":
                 return "Recordatorio de cita: Su cita está programada para el "
                         + apt.scheduledAt().toLocalDate() + " a las " + apt.scheduledAt().toLocalTime()
                         + " en " + apt.location() + ". Servicio: " + apt.serviceType() + ".";
-
-            case "fr": // French
+            case "fr":
                 return "Rappel de rendez-vous : Votre rendez-vous est prévu le "
                         + apt.scheduledAt().toLocalDate() + " à " + apt.scheduledAt().toLocalTime()
                         + " à " + apt.location() + ". Service : " + apt.serviceType() + ".";
-
-            case "en": // English
-            default:   // Fallback to English for any unknown language
+            case "en":
+            default:
                 return "Appointment reminder: Your appointment is scheduled for "
                         + apt.scheduledAt().toLocalDate() + " at " + apt.scheduledAt().toLocalTime()
                         + " at " + apt.location() + ". Service: " + apt.serviceType() + ".";
