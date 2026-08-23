@@ -1,106 +1,33 @@
 # AI Usage
 
-This file records how AI tools were used during development of
+
 **Problem 7 – The Reminder That Reaches**.
 
-The project author remains responsible for understanding, reviewing, testing,
-and explaining all code included in the repository.
 
 ---
 
-## AI Tool
 
-**Tool:** ChatGPT
+Tool:Gemini Ai
+# AI Usage Declaration
 
 ## General Usage
-
-AI was used as an assistant during development for:
-
-- understanding and breaking down the problem requirements;
-- discussing possible architecture and component boundaries;
-- explaining Java and Spring Boot concepts when needed;
-- generating or suggesting implementation scaffolding;
-- suggesting test cases and edge cases;
-- helping investigate and debug errors;
-- reviewing implementation decisions;
-- helping structure project documentation.
-
----
+I utilized an AI assistant (Google Gemini) as a pair-programming partner and sounding board throughout this project. It helped accelerate development, validate architectural decisions, and troubleshoot framework-specific errors, while I maintained full control over the business logic and final implementation.
 
 ## Requirement Analysis
-
-ChatGPT was used to help interpret the Brite Spark participant handbook and the
-Problem 7 document, especially:
-
-- the mandatory floor requirements;
-- channel fallback and stopping rules;
-- quiet hours and opt-outs;
-- language selection;
-- shared contact-point handling;
-- measurable success;
-- the distinction between required and not-required features;
-- the day-two requirement change.
-
-The final implementation decisions remain the responsibility of the project
-author.
-
----
+* **Interpreting CR-2026/11:** Used AI to discuss the implications of the Day 2 surprise rule (7-day rate limit). We brainstormed defensible prioritization strategies and decided that sorting appointments chronologically was the fairest and most logical approach.
+* **Feature Mapping:** Broke down the "Floor" requirements (multi-channel fallback, quiet hours, translations) into independent Java components.
 
 ## Coding Assistance
+* **Core Logic:** Leveraged AI to generate standard Java boilerplate, including the `switch` statement for multi-language translations (English, Spanish, French).
+* **Time API:** Collaborated on writing the `java.time.LocalTime` logic to ensure the quiet hours accurately handled overnight boundaries.
+* **Rate Limiting:** Discussed data structures to track contacts, ultimately implementing a `HashMap` to record resident attempts and enforce the limit.
 
-AI may be used for scaffolding or individual implementation tasks during
-development.
+## Testing
+* **Output Validation:** Used the AI to verify the mathematical correctness of the final `REMINDER RUN REPORT`. We confirmed that successful attempts, rate-limited suppressions (152), and opt-out suppressions (71) perfectly totaled the 940 input records. 
 
-Any generated code will be reviewed, adapted, and tested before being included
-in the repository.
+## Debugging
+* **Property Binding:** Debugged a Spring Boot `@ConfigurationProperties` issue where the `application.properties` prefix did not match the Java class, preventing the custom quiet hours from loading.
+* **Time Boundary Bugs:** Fixed a logic bug where the system blocked all messages because it miscalculated the daytime window when the quiet hours spanned across midnight.
 
-The project author will be able to explain the purpose and behavior of the
-submitted code.
-
----
-
-## Testing and Debugging
-
-AI may be used to:
-
-- suggest test scenarios;
-- identify possible edge cases;
-- explain error messages;
-- suggest debugging approaches;
-- review test coverage.
-
-Tests will be run against the actual project rather than being accepted solely
-because an AI tool suggested them.
-
----
-
-## Data Inspection / Cleaning
-
-If AI is used to help inspect, transform, or clean the supplied data, the
-specific use will be recorded here with a short description of what was done.
-
-Example format:
-
-- **Task:** Contact-data inspection
-- **AI assistance:** Identified possible edge cases to investigate
-- **Final action:** Verified against the actual supplied data before
-  implementation
-
----
-
-## Documentation Assistance
-
-ChatGPT may be used to help organize or improve README, DECISIONS.md,
-AI-USAGE.md, and other project documentation.
-
-The project author will review the final documentation for accuracy.
-
----
-
-## Responsibility
-
-AI assistance does not replace understanding of the implementation.
-
-The project author is responsible for every line submitted and for explaining
-the design, logic, limitations, and behavior of the solution during the Brite
-Spark Q&A.
+## Data Cleaning or Inspection
+* **Data Mapping:** Used AI to help inspect how the resident profile fields (e.g., language tags, missing endpoints) dictate the behavior of the fallback engine and message generator, ensuring the system fails gracefully when data is missing.
