@@ -10,14 +10,24 @@ trade-offs, edge cases, and limitations as the project is developed.
 
 ---
 
-## 1. Initial Technology Stack
+## 1. Technology Stack
 
-**Decision:** To be finalized after inspecting the provided Problem 7 data pack.
+**Decision:** Use Java 21 with Spring Boot 4.1.1 and Maven.
 
-**Reason:** The problem document explicitly asks us to read and understand the
-contact list before designing the system. The actual data structure should
-influence whether we need a database, what models are required, and how the
-input should be processed.
+**Technologies:**
+- Spring Web
+- Spring Validation
+- Spring Boot DevTools
+- Spring Boot Test
+- Git & GitHub
+
+**Reason:** Spring Boot provides a simple and modular backend for implementing
+the reminder, contact-policy, channel-fallback, and validation requirements.
+
+**Database:** Will be decided after inspecting the provided Problem 7 data pack.
+
+**Not using initially:** React, Spring Security, Thymeleaf, AWS, or real
+messaging providers because they are not required for Problem 7.
 
 ---
 
