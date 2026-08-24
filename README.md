@@ -49,6 +49,7 @@ bash(script this in terminal or use postman for api checking):
  TO RUN AND GET OUTPUT 
  1. RUN SPRING BOOT CODE (APPLICATION)
  2. SEARCH OR TYPE THE MENTIONED URL ,AS I HAVE SAID THAT BASIS ON TERMINAL OR POSTMAN
+ 3. WE CAN GET TO SEE THE OUTPUT THAT IN INTELIJ(IF USING INTELIJ),IF (USING TERMINAL) WE CAN DIRECTLY SEE THE OUTPUT IN TERMINAL ITSELF
 ___________________________________________________________________________________________________________________________________________________________________________
 WHILE BEFORE EVALUATING PLEASE GO THROUGH THIS BECAUSE OUTPUT EXPLANATION IS MENTIONED HERE :
 
